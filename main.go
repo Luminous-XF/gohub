@@ -1,34 +1,22 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
-	"net/http"
-	"strings"
+	"gohub/bootstrap"
 )
 
 func main() {
-	r := gin.New()
+	// 创建一个 Gin.Engine 实例
+	router := gin.New()
 
-	r.Use(gin.Logger(), gin.Recovery())
+	// 初始化路由绑定
+	bootstrap.SetupRoute(router)
 
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "hello world",
-		})
-	})
-
-	r.NoRoute(func(c *gin.Context) {
-		acceptString := c.Request.Header.Get("Accept")
-
-		if strings.Contains(acceptString, "text/html") {
-			c.String(http.StatusNotFound, "404 page not found")
-		} else {
-			c.JSON(http.StatusNotFound, gin.H{
-				"error_code":    http.StatusNotFound,
-				"error_message": "404 page not found",
-			})
-		}
-	})
-
-	r.Run(":8080")
+	// 运行服务
+	err := router.Run(":8080")
+	if err != nil {
+		// 错误处理
+		fmt.Println(err.Error())
+	}
 }
