@@ -21,6 +21,7 @@ func SetupRoute(router *gin.Engine) {
 	setup404Handler(router)
 }
 
+// registerGlobalMiddleWare 注册全局中间件
 func registerGlobalMiddleWare(router *gin.Engine) {
 	router.Use(
 		gin.Logger(),
