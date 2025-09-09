@@ -2,6 +2,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"reflect"
 
@@ -124,6 +125,15 @@ func GetWithDefault[T CfgValue](path string, defaultValue T) T {
 	value, ok := Get[T](path)
 	if !ok {
 		return defaultValue
+	}
+	return value
+}
+
+// MustGet 获取配置项, 获取失败则 panic
+func MustGet[T CfgValue](path string) T {
+	value, ok := Get[T](path)
+	if !ok {
+		panic(fmt.Sprintf("配置项 [%s] 不存在或类型转换失败", path))
 	}
 	return value
 }
