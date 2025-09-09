@@ -14,7 +14,7 @@ var viper *viperlib.Viper
 // CfgFunc 动态加载配置信X息
 type CfgFunc func() map[string]interface{}
 
-// CfgValue 是可以从配置中获取的类型
+// CfgValue 可以从配置中获取的类型
 type CfgValue interface {
 	~string | ~int | ~int64 | ~float64 | ~bool | ~map[string]string
 }
@@ -26,6 +26,7 @@ func init() {
 	viper = viperlib.New()
 
 	viper.SetConfigType("env")
+	// 从当前工作目录读取
 	viper.AddConfigPath(".")
 	viper.SetEnvPrefix("appenv")
 	viper.AutomaticEnv()
