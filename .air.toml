@@ -15,7 +15,7 @@ cmd = "go build -o ./tmp/main.exe ."
 # 如果文件更改过于频繁，则没有必要在每次更改时都触发构建。可以设置触发构建的延迟时间
 delay = 1000
 # 忽略这些文件扩展名或目录
-exclude_dir = ["assets", "tmp", "vendor","public/uploads"]
+exclude_dir = ["assets", "tmp", "vendor", "public/uploads"]
 # 忽略以下文件
 exclude_file = []
 # 使用正则表达式进行忽略文件设置
@@ -39,7 +39,7 @@ send_interrupt = false
 # error 发生时结束运行
 stop_on_error = true
 # 命令附加参数 (bin/full_bin). Will run './tmp/main hello world'.
-args_bin  =  []
+args_bin = []
 
 [color]
 # 自定义每个部分显示的颜色。如果找不到颜色，使用原始的应用程序日志。
