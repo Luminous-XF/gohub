@@ -37,7 +37,7 @@ func Recovery() gin.HandlerFunc {
 						zap.Any("error", err),
 						zap.String("request", string(httpRequest)),
 					)
-					ctx.Error(err.(error))
+					_ = ctx.Error(err.(error))
 					ctx.Abort()
 
 					return
