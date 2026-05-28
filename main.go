@@ -24,6 +24,9 @@ func main() {
 	// 初始化 Gin 实例
 	r := gin.New()
 
+	// 初始化数据库
+	bootstrap.SetupDB()
+
 	// 注册中间件
 	bootstrap.SetupMiddleware(r)
 
