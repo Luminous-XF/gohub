@@ -10,7 +10,7 @@ type SignupPhoneExistRequest struct {
 	Phone string `json:"phone,omitempty" valid:"phone"`
 }
 
-func ValidateSignupPhoneExist(data interface{}, ctx *gin.Context) map[string][]string {
+func ValidateSignupPhoneExist(data interface{}, _ *gin.Context) map[string][]string {
 	// 自定义验证规则
 	rules := govalidator.MapData{
 		"phone": []string{"required", "digits:11"},
