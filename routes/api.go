@@ -10,16 +10,18 @@ import (
 func RegisterAPIRoutes(r *gin.Engine) {
 	v1 := r.Group("/v1")
 	{
-		v1.GET("/", func(c *gin.Context) {
-			c.JSON(http.StatusOK, gin.H{
+		v1.GET("/", func(ctx *gin.Context) {
+			ctx.JSON(http.StatusOK, gin.H{
 				"message": "Hello world!",
 			})
 		})
 
 		authGroup := v1.Group("/auth")
 		{
-			c := new(auth.SignupController)
-			authGroup.POST("/signup/phone/exist", c.IsPhoneExist)
+			ctx := new(auth.SignupController)
+
+			authGroup.POST("/signup/phone/exist", ctx.IsPhoneExist)
+			authGroup.POST("/signup/email/exist", ctx.IsEmailExist)
 		}
 	}
 }

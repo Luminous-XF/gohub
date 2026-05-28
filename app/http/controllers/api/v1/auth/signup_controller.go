@@ -46,3 +46,29 @@ func (c *SignupController) IsPhoneExist(ctx *gin.Context) {
 		"exist": user.IsPhoneExist(req.Phone),
 	})
 }
+
+func (c *SignupController) IsEmailExist(ctx *gin.Context) {
+	req := requests.SignupEmailExistRequest{}
+
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
+			"error": err.Error(),
+		})
+
+		fmt.Println(err.Error())
+
+		return
+	}
+
+	errs := requests.ValidateSignupEmailExist(&req, ctx)
+	if len(errs) > 0 {
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
+			"error": errs,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"exist": user.IsEmailExist(req.Email),
+	})
+}
