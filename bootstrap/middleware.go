@@ -15,6 +15,6 @@ func SetupMiddleware(r *gin.Engine) {
 func registerGlobalMiddleware(r *gin.Engine) {
 	r.Use(
 		middlewares.Logger(),
-		gin.Recovery(),
+		middlewares.Recovery(),
 	)
 }
