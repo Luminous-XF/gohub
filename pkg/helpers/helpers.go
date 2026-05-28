@@ -1,7 +1,11 @@
 // Package helpers 用于存放辅助方法
 package helpers
 
-import "reflect"
+import (
+	"fmt"
+	"reflect"
+	"time"
+)
 
 // Empty 判空方法
 func Empty(val interface{}) bool {
@@ -28,4 +32,10 @@ func Empty(val interface{}) bool {
 	default:
 		return reflect.DeepEqual(val, reflect.Zero(v.Type()).Interface())
 	}
+}
+
+// MicrosecondString 将 time.Duration 类型 (nano seconds 为单位)
+// 输出为小数点后 3 位的 ms (microsecond 毫秒，千分之一秒)
+func MicrosecondString(elapsed time.Duration) string {
+	return fmt.Sprintf("%.3fms", float64(elapsed.Nanoseconds())/1e6)
 }

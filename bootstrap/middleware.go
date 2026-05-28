@@ -1,6 +1,10 @@
 package bootstrap
 
-import "github.com/gin-gonic/gin"
+import (
+	"gohub/app/http/middlewares"
+
+	"github.com/gin-gonic/gin"
+)
 
 // SetupMiddleware 配置中间件
 func SetupMiddleware(r *gin.Engine) {
@@ -10,7 +14,7 @@ func SetupMiddleware(r *gin.Engine) {
 // registerGlobalMiddleware 配置全局中间件
 func registerGlobalMiddleware(r *gin.Engine) {
 	r.Use(
-		gin.Logger(),
+		middlewares.Logger(),
 		gin.Recovery(),
 	)
 }
