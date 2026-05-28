@@ -21,23 +21,14 @@ func ValidateSignupPhoneExist(data interface{}, _ *gin.Context) map[string][]str
 	}
 
 	// 自定义验证出错时的提示
-	messages := govalidator.MapData{
+	msg := govalidator.MapData{
 		"phone": []string{
 			"required:Phone number is required.",
 			"digits:Phone number length must be 11 digits.",
 		},
 	}
 
-	// 配置初始化
-	opts := govalidator.Options{
-		Data:          data,
-		Rules:         rules,
-		TagIdentifier: "valid",
-		Messages:      messages,
-	}
-
-	// 开始验证
-	return govalidator.New(opts).ValidateStruct()
+	return validate(data, rules, msg)
 }
 
 func ValidateSignupEmailExist(data interface{}, _ *gin.Context) map[string][]string {
@@ -45,7 +36,7 @@ func ValidateSignupEmailExist(data interface{}, _ *gin.Context) map[string][]str
 		"email": []string{"required", "min:4", "max:30", "email"},
 	}
 
-	messages := govalidator.MapData{
+	msg := govalidator.MapData{
 		"email": []string{
 			"required: Email address is required.",
 			"min:Email address length must be greater than 4 digits.",
@@ -54,12 +45,5 @@ func ValidateSignupEmailExist(data interface{}, _ *gin.Context) map[string][]str
 		},
 	}
 
-	opts := govalidator.Options{
-		Data:          data,
-		Rules:         rules,
-		TagIdentifier: "valid",
-		Messages:      messages,
-	}
-
-	return govalidator.New(opts).ValidateStruct()
+	return validate(data, rules, msg)
 }
