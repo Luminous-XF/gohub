@@ -5,6 +5,7 @@ import (
 	"fmt"
 	v1 "gohub/app/http/controllers/api/v1"
 	"gohub/app/models/user"
+	"gohub/app/requests"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,14 +16,11 @@ type SignupController struct {
 }
 
 func (c *SignupController) IsPhoneExist(ctx *gin.Context) {
-	// 请求对象
-	type PhoneExistRequest struct {
-		Phone string `json:"phone"`
-	}
-	request := PhoneExistRequest{}
+	// 初始化请求对象
+	req := requests.SignupPhoneExistRequest{}
 
 	// 解析 JSON 请求
-	if err := ctx.ShouldBindJSON(&request); err != nil {
+	if err := ctx.ShouldBindJSON(&req); err != nil {
 		// 解析失败, 返回 422 状态码和错误信息
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
 			"error": err.Error(),
@@ -35,7 +33,16 @@ func (c *SignupController) IsPhoneExist(ctx *gin.Context) {
 		return
 	}
 
+	// 表单验证
+	errs := requests.ValidateSignupPhoneExist(&req, ctx)
+	if len(errs) > 0 {
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
+			"error": errs,
+		})
+		return
+	}
+
 	ctx.JSON(http.StatusOK, gin.H{
-		"exist": user.IsPhoneExist(request.Phone),
+		"exist": user.IsPhoneExist(req.Phone),
 	})
 }
