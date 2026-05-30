@@ -5,7 +5,7 @@ import (
 	v1 "gohub/app/http/controllers/api/v1"
 	"gohub/app/models/user"
 	"gohub/app/requests"
-	"net/http"
+	"gohub/app/response"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,7 +21,7 @@ func (c *SignupController) IsPhoneExist(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
+	response.JSON(ctx, gin.H{
 		"exist": user.IsPhoneExist(req.Phone),
 	})
 }
@@ -33,7 +33,7 @@ func (c *SignupController) IsEmailExist(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
+	response.JSON(ctx, gin.H{
 		"exist": user.IsEmailExist(req.Email),
 	})
 }

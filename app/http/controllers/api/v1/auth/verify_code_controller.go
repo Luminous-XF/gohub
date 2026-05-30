@@ -2,9 +2,9 @@ package auth
 
 import (
 	v1 "gohub/app/http/controllers/api/v1"
+	"gohub/app/response"
 	"gohub/pkg/captcha"
 	"gohub/pkg/logger"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,7 +18,7 @@ func (c *VerifyCodeController) ShowCaptcha(ctx *gin.Context) {
 
 	logger.LogIf(err)
 
-	ctx.JSON(http.StatusOK, gin.H{
+	response.JSON(ctx, gin.H{
 		"captcha_id":    id,
 		"captcha_image": b64s,
 	})

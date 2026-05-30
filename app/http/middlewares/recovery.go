@@ -1,9 +1,9 @@
 package middlewares
 
 import (
+	"gohub/app/response"
 	"gohub/pkg/logger"
 	"net"
-	"net/http"
 	"net/http/httputil"
 	"os"
 	"strings"
@@ -51,9 +51,7 @@ func Recovery() gin.HandlerFunc {
 					zap.Stack("stacktrace"),
 				)
 
-				ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-					"message": "Something went wrong, please try again later.",
-				})
+				response.Abort500(ctx)
 			}
 		}()
 
