@@ -21,7 +21,7 @@ func (store *RedisStore) Set(key string, value string) {
 	}
 
 	if ok := store.RedisClient.Set(store.KeyPrefix+key, value, ExpireTime); !ok {
-		logger.Error("redis set key fail")
+		logger.ErrorString("Captcha", "Set", "Captcha store error")
 	}
 }
 
