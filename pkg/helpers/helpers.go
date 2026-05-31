@@ -2,7 +2,9 @@
 package helpers
 
 import (
+	"crypto/rand"
 	"fmt"
+	"io"
 	"reflect"
 	"time"
 )
@@ -38,4 +40,17 @@ func Empty(val interface{}) bool {
 // 输出为小数点后 3 位的 ms (microsecond 毫秒，千分之一秒)
 func MicrosecondString(elapsed time.Duration) string {
 	return fmt.Sprintf("%.3fms", float64(elapsed.Nanoseconds())/1e6)
+}
+
+func RandomNumber(length int) string {
+	table := [...]byte{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}
+	b := make([]byte, length)
+	n, err := io.ReadAtLeast(rand.Reader, b, length)
+	if err != nil || n != length {
+		panic(err)
+	}
+	for i := range b {
+		b[i] = table[int(b[i])%len(table)]
+	}
+	return string(b)
 }
