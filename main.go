@@ -31,7 +31,7 @@ func main() {
 	gin.SetMode(gin.ReleaseMode)
 
 	// 初始化 Gin 实例
-	r := gin.New()
+	engine := gin.New()
 
 	// 初始化 MySQL
 	bootstrap.SetupDB()
@@ -40,13 +40,13 @@ func main() {
 	bootstrap.SetupRedis()
 
 	// 注册中间件
-	bootstrap.SetupMiddleware(r)
+	bootstrap.SetupMiddleware(engine)
 
 	// 初始化路由绑定
-	bootstrap.SetupRoute(r)
+	bootstrap.SetupRoute(engine)
 
 	// 运行服务
-	err := r.Run(":" + config.Get("app.port"))
+	err := engine.Run(":" + config.Get("app.port"))
 	if err != nil {
 		fmt.Println(err.Error())
 	}

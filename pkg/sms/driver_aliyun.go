@@ -2,51 +2,68 @@ package sms
 
 import (
 	"encoding/json"
-	"fmt"
 	"gohub/pkg/config"
 	"gohub/pkg/logger"
 
-	"github.com/aliyun/alibaba-cloud-sdk-go/services/dysmsapi"
+	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
+	dypnsapi "github.com/alibabacloud-go/dypnsapi-20170525/v3/client"
+	util "github.com/alibabacloud-go/tea-utils/v2/service"
+	"github.com/alibabacloud-go/tea/tea"
+	"github.com/aliyun/credentials-go/credentials"
 )
 
 type Aliyun struct{}
 
 func (sms *Aliyun) Send(phone string, message Message) bool {
-	client, err := dysmsapi.NewClientWithAccessKey(
-		"cn-hangzhou",
-		config.GetString("sms.aliyun.access_key_id"),
-		config.GetString("sms.aliyun.access_key_secret"),
-	)
+	credential, err := credentials.NewCredential(&credentials.Config{
+		Type:            tea.String("access_key"),
+		AccessKeyId:     tea.String(config.GetString("sms.aliyun.access_key_id")),
+		AccessKeySecret: tea.String(config.GetString("sms.aliyun.access_key_secret")),
+	})
 	if err != nil {
-		logger.ErrorString("SMS[AliYun]", "初始化客户端失败", err.Error())
+		logger.ErrorString("SMS[AliYun]", "NewCredential", err.Error())
 		return false
 	}
 
-	req := dysmsapi.CreateSendSmsRequest()
-	req.Scheme = "https"
-	req.PhoneNumbers = phone
-	req.SignName = config.GetString("sms.aliyun.sign_name")
-	req.TemplateCode = config.GetString("sms.aliyun.template_code")
-	templateParam, _ := json.Marshal(message.Data)
-	req.TemplateParam = string(templateParam)
-
-	rsp, err := client.SendSms(req)
+	client, err := dypnsapi.NewClient(&openapi.Config{
+		Credential: credential,
+		Endpoint:   tea.String(config.GetString("sms.aliyun.endpoint")),
+	})
 	if err != nil {
-		logger.ErrorString("SMS[SliYun]", "Send request failed", err.Error())
+		logger.ErrorString("SMS[AliYun]", "NewClient", err.Error())
 		return false
 	}
 
-	if rsp.Code != "OK" {
-		errMsg := fmt.Sprintf("code: %s, msg: %s, requestId: %s", rsp.Code, rsp.Message, rsp.RequestId)
-		logger.ErrorString("SMS[SliYun", "Send sms failed", errMsg)
+	templateParam, err := json.Marshal(message.Data)
+	if err != nil {
+		logger.ErrorString("SMS[AliYun]", "Marshal Message", err.Error())
 		return false
 	}
 
-	logger.InfoString(
-		"SMS[AliYun]",
-		"Send sms success",
-		fmt.Sprintf("Phone number: %s, RequestId: %s", phone, rsp.RequestId),
-	)
+	sendVerifyCodeRequest := &dypnsapi.SendSmsVerifyCodeRequest{
+		SignName:      tea.String(config.GetString("sms.aliyun.sign_name")),
+		TemplateCode:  tea.String(config.GetString("sms.aliyun.template_code")),
+		PhoneNumber:   tea.String(phone),
+		TemplateParam: tea.String(string(templateParam)),
+	}
+	runtime := &util.RuntimeOptions{}
+
+	response, err := client.SendSmsVerifyCodeWithOptions(sendVerifyCodeRequest, runtime)
+	if err != nil {
+		logger.ErrorString("SMS[AliYun]", "SendSmsVerifyCode", err.Error())
+		return false
+	}
+
+	if response.Body == nil || *response.Body.Code != "OK" {
+		if response.Body != nil {
+			logger.ErrorString("SMS[AliYun]", "SendSmsVerifyCode", *response.Body.Message)
+		} else {
+			logger.ErrorString("SMS[AliYun]", "SendSmsVerifyCode", "Response body is nil")
+		}
+		return false
+	}
+
+	logger.InfoString("SMS[AliYun]", "SendSmsVerifyCode", *response.Body.Code)
 
 	return true
 }
