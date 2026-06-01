@@ -1,0 +1,45 @@
+package requests
+
+import (
+	"gohub/pkg/captcha"
+
+	"github.com/gin-gonic/gin"
+	"github.com/thedevsaddam/govalidator"
+)
+
+type VerifyCodePhoneRequest struct {
+	CaptchaID     string `json:"captcha_id,omitempty" valid:"captcha_id"`
+	CaptchaAnswer string `json:"captcha_answer,omitempty" valid:"captcha_answer"`
+	Phone         string `json:"phone,omitempty" valid:"phone"`
+}
+
+func VerifyCodePhone(data interface{}, ctx *gin.Context) map[string][]string {
+	rules := govalidator.MapData{
+		"phone":          []string{"required", "digits:11"},
+		"captcha_id":     []string{"required"},
+		"captcha_answer": []string{"required", "digits:6"},
+	}
+
+	messages := govalidator.MapData{
+		"phone": []string{
+			"required:Phone numbers are required.",
+			"digits:Must be 11 phone number.",
+		},
+		"captcha_id": []string{
+			"required:Captcha ID are required.",
+		},
+		"captcha_answer": []string{
+			"required:Captcha Answer are required.",
+			"digits:Must be 6 captcha number.",
+		},
+	}
+
+	errs := validate(data, rules, messages)
+
+	_data := data.(*VerifyCodePhoneRequest)
+	if ok := captcha.NewCaptcha().VerifyCaptcha(_data.CaptchaID, _data.CaptchaAnswer); !ok {
+		errs["captcha_answer"] = append(errs["captcha_answer"], "Captcha Answer is wrong.")
+	}
+
+	return errs
+}
