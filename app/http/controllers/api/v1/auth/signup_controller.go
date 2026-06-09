@@ -44,16 +44,38 @@ func (c *SignupController) SignupUsingPhone(ctx *gin.Context) {
 		return
 	}
 
-	_user := user.User{
+	userModel := user.User{
 		Name:     req.Name,
 		Phone:    req.Phone,
 		Password: req.Password,
 	}
-	_user.Create()
+	userModel.Create()
 
-	if _user.ID > 0 {
+	if userModel.ID > 0 {
 		response.CreateJSON(ctx, gin.H{
-			"data": _user,
+			"data": userModel,
+		})
+	} else {
+		response.Abort500(ctx, "Failed to create user. Please try again later.")
+	}
+}
+
+func (c *SignupController) SignupUsingEmail(ctx *gin.Context) {
+	req := requests.SignupUsingEmailRequest{}
+	if ok := requests.Validate(ctx, &req, requests.SignupUsingEmail); !ok {
+		return
+	}
+
+	userModel := user.User{
+		Name:     req.Name,
+		Email:    req.Email,
+		Password: req.Password,
+	}
+	userModel.Create()
+
+	if userModel.ID > 0 {
+		response.CreateJSON(ctx, gin.H{
+			"data": userModel,
 		})
 	} else {
 		response.Abort500(ctx, "Failed to create user. Please try again later.")

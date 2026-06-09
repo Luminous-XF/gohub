@@ -11,7 +11,7 @@ func ValidatePasswordConfirm(password, passwordConfirm string, errs map[string][
 
 func ValidateVerifyCode(key, answer string, errs map[string][]string) map[string][]string {
 	if ok := verifycode.NewVerifyCode().CheckAnswer(key, answer); !ok {
-		errs[key] = append(errs[key], "The verify code is invalid.")
+		errs["verify_code"] = append(errs["verify_code"], "The verify code is invalid.")
 	}
 	return errs
 }

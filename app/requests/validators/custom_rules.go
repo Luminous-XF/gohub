@@ -11,7 +11,7 @@ import (
 
 func init() {
 	govalidator.AddCustomRule("not_exists", func(field, rule, msg string, value interface{}) error {
-		rng := strings.Split(strings.TrimPrefix(rule, "not_exists:"), "")
+		rng := strings.Split(strings.TrimPrefix(rule, "not_exists:"), ",")
 
 		tableName := rng[0]
 		dbField := rng[1]
