@@ -6,6 +6,7 @@ import (
 	"gohub/app/models/user"
 	"gohub/app/requests"
 	"gohub/app/response"
+	"gohub/pkg/jwt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -52,8 +53,11 @@ func (c *SignupController) SignupUsingPhone(ctx *gin.Context) {
 	userModel.Create()
 
 	if userModel.ID > 0 {
+		token := jwt.NewJWT().IssueToken(userModel.GetStringID(), userModel.Name)
+
 		response.CreateJSON(ctx, gin.H{
-			"data": userModel,
+			"token": token,
+			"data":  userModel,
 		})
 	} else {
 		response.Abort500(ctx, "Failed to create user. Please try again later.")
@@ -74,8 +78,11 @@ func (c *SignupController) SignupUsingEmail(ctx *gin.Context) {
 	userModel.Create()
 
 	if userModel.ID > 0 {
+		token := jwt.NewJWT().IssueToken(userModel.GetStringID(), userModel.Name)
+
 		response.CreateJSON(ctx, gin.H{
-			"data": userModel,
+			"token": token,
+			"data":  userModel,
 		})
 	} else {
 		response.Abort500(ctx, "Failed to create user. Please try again later.")
