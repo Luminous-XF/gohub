@@ -19,7 +19,7 @@ type VerifyCodeEmailRequest struct {
 	Email         string `json:"email,omitempty" valid:"email"`
 }
 
-func VerifyCodePhone(data interface{}, ctx *gin.Context) map[string][]string {
+func VerifyCodePhone(data interface{}, _ *gin.Context) map[string][]string {
 	rules := govalidator.MapData{
 		"phone":          []string{"required", "digits:11"},
 		"captcha_id":     []string{"required"},
@@ -50,7 +50,7 @@ func VerifyCodePhone(data interface{}, ctx *gin.Context) map[string][]string {
 	return errs
 }
 
-func VerifyCodeEmail(data interface{}, ctx *gin.Context) map[string][]string {
+func VerifyCodeEmail(data interface{}, _ *gin.Context) map[string][]string {
 	rules := govalidator.MapData{
 		"email":          []string{"required", "min:4", "max:30", "email"},
 		"captcha_id":     []string{"required"},
