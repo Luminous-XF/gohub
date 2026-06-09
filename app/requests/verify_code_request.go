@@ -13,6 +13,12 @@ type VerifyCodePhoneRequest struct {
 	Phone         string `json:"phone,omitempty" valid:"phone"`
 }
 
+type VerifyCodeEmailRequest struct {
+	CaptchaID     string `json:"captcha_id,omitempty" valid:"captcha_id"`
+	CaptchaAnswer string `json:"captcha_answer,omitempty" valid:"captcha_answer"`
+	Email         string `json:"email,omitempty" valid:"email"`
+}
+
 func VerifyCodePhone(data interface{}, ctx *gin.Context) map[string][]string {
 	rules := govalidator.MapData{
 		"phone":          []string{"required", "digits:11"},
@@ -37,6 +43,39 @@ func VerifyCodePhone(data interface{}, ctx *gin.Context) map[string][]string {
 	errs := validate(data, rules, messages)
 
 	_data := data.(*VerifyCodePhoneRequest)
+	if ok := captcha.NewCaptcha().VerifyCaptcha(_data.CaptchaID, _data.CaptchaAnswer); !ok {
+		errs["captcha_answer"] = append(errs["captcha_answer"], "Captcha Answer is wrong.")
+	}
+
+	return errs
+}
+
+func VerifyCodeEmail(data interface{}, ctx *gin.Context) map[string][]string {
+	rules := govalidator.MapData{
+		"email":          []string{"required", "min:4", "max:30", "email"},
+		"captcha_id":     []string{"required"},
+		"captcha_answer": []string{"required", "digits:6"},
+	}
+
+	messages := govalidator.MapData{
+		"email": []string{
+			"required:Email address is required.",
+			"min:Email address must be at least 5.",
+			"max:Email address must be at least 30 characters.",
+			"email:Invalid email address.",
+		},
+		"captcha_id": []string{
+			"required:Captcha ID are required.",
+		},
+		"captcha_answer": []string{
+			"required:Captcha Answer are required.",
+			"digits:Must be 6 captcha number.",
+		},
+	}
+
+	errs := validate(data, rules, messages)
+
+	_data := data.(*VerifyCodeEmailRequest)
 	if ok := captcha.NewCaptcha().VerifyCaptcha(_data.CaptchaID, _data.CaptchaAnswer); !ok {
 		errs["captcha_answer"] = append(errs["captcha_answer"], "Captcha Answer is wrong.")
 	}
