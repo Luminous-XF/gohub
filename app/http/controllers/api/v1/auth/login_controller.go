@@ -23,11 +23,29 @@ func (c *LoginController) LoginByPhone(ctx *gin.Context) {
 	user, err := auth.LoginByPhone(req.Phone)
 	if err != nil {
 		response.Error(ctx, err, "user not found")
-	} else {
-		token := jwt.NewJWT().IssueToken(user.GetStringID(), user.Name)
-
-		response.JSON(ctx, gin.H{
-			"token": token,
-		})
+		return
 	}
+
+	token := jwt.NewJWT().IssueToken(user.GetStringID(), user.Name)
+	response.JSON(ctx, gin.H{
+		"token": token,
+	})
+}
+
+func (c *LoginController) LoginByPassword(ctx *gin.Context) {
+	req := requests.LoginByPasswordRequest{}
+	if ok := requests.Validate(ctx, &req, requests.LoginByPassword); !ok {
+		return
+	}
+
+	user, err := auth.Attempt(req.LoginID, req.Password)
+	if err != nil {
+		response.Unauthorized(ctx, "user not found or password is incorrect")
+		return
+	}
+
+	token := jwt.NewJWT().IssueToken(user.GetStringID(), user.Name)
+	response.JSON(ctx, gin.H{
+		"token": token,
+	})
 }

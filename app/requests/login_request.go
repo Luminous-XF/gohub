@@ -36,3 +36,44 @@ func LoginByPhone(data interface{}, ctx *gin.Context) map[string][]string {
 
 	return errs
 }
+
+type LoginByPasswordRequest struct {
+	CaptchaID     string `json:"captcha_id,omitempty" valid:"captcha_id"`
+	CaptchaAnswer string `json:"captcha_answer,omitempty" valid:"captcha_answer"`
+	LoginID       string `json:"login_id" valid:"login_id"`
+	Password      string `json:"password,omitempty" valid:"password"`
+}
+
+func LoginByPassword(data interface{}, ctx *gin.Context) map[string][]string {
+	rules := govalidator.MapData{
+		"captcha_id":     []string{"required"},
+		"captcha_answer": []string{"required", "digits:6"},
+		"login_id":       []string{"required", "min:3"},
+		"password":       []string{"required", "min:6"},
+	}
+
+	msg := govalidator.MapData{
+		"captcha_id": []string{
+			"required:captcha id is required",
+		},
+		"captcha_answer": []string{
+			"required:captcha answer is required",
+			"digits:captcha answer must be 6 digits",
+		},
+		"login_id": []string{
+			"required:login id is required",
+			"min:login id must be at least 3 characters",
+		},
+		"password": []string{
+			"required:password is required",
+			"min:password must be at least 6 characters",
+		},
+	}
+
+	errs := validate(data, rules, msg)
+
+	_data := data.(*LoginByPasswordRequest)
+	errs = validators.ValidateCaptcha(_data.CaptchaID, _data.CaptchaAnswer, errs)
+
+	return errs
+}
