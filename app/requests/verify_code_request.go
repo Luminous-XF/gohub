@@ -1,7 +1,7 @@
 package requests
 
 import (
-	"gohub/pkg/captcha"
+	"gohub/app/requests/validators"
 
 	"github.com/gin-gonic/gin"
 	"github.com/thedevsaddam/govalidator"
@@ -43,9 +43,7 @@ func VerifyCodePhone(data interface{}, _ *gin.Context) map[string][]string {
 	errs := validate(data, rules, messages)
 
 	_data := data.(*VerifyCodePhoneRequest)
-	if ok := captcha.NewCaptcha().VerifyCaptcha(_data.CaptchaID, _data.CaptchaAnswer); !ok {
-		errs["captcha_answer"] = append(errs["captcha_answer"], "Captcha Answer is wrong.")
-	}
+	errs = validate(_data.CaptchaID, rules, messages)
 
 	return errs
 }
@@ -76,9 +74,7 @@ func VerifyCodeEmail(data interface{}, _ *gin.Context) map[string][]string {
 	errs := validate(data, rules, messages)
 
 	_data := data.(*VerifyCodeEmailRequest)
-	if ok := captcha.NewCaptcha().VerifyCaptcha(_data.CaptchaID, _data.CaptchaAnswer); !ok {
-		errs["captcha_answer"] = append(errs["captcha_answer"], "Captcha Answer is wrong.")
-	}
+	errs = validators.ValidateCaptcha(_data.CaptchaID, _data.CaptchaAnswer, errs)
 
 	return errs
 }
