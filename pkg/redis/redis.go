@@ -68,14 +68,12 @@ func (rds Client) Get(key string) string {
 }
 
 func (rds Client) Has(key string) bool {
-	_, err := rds.Client.Exists(rds.Context, key).Result()
+	count, err := rds.Client.Exists(rds.Context, key).Result()
 	if err != nil {
-		if !errors.Is(err, redis.Nil) {
-			logger.ErrorString("Redis", "Has", err.Error())
-		}
+		logger.ErrorString("Redis", "Has", err.Error())
 		return false
 	}
-	return true
+	return count > 0
 }
 
 func (rds Client) Del(keys ...string) bool {
