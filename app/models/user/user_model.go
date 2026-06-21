@@ -18,7 +18,12 @@ type User struct {
 }
 
 func (model *User) Create() {
-	database.DB.Create(&model)
+	database.DB.Create(model)
+}
+
+func (model *User) Save() (rowsAffected int64) {
+	res := database.DB.Save(model)
+	return res.RowsAffected
 }
 
 func (model *User) ComparePassword(password string) bool {
