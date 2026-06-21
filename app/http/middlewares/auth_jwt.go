@@ -31,3 +31,18 @@ func AuthJWT() gin.HandlerFunc {
 		ctx.Next()
 	}
 }
+
+func GuestJWT() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		if len(ctx.GetHeader("Authorization")) > 0 {
+			_, err := jwt.NewJWT().ParseToken(ctx)
+			if err == nil {
+				response.Unauthorized(ctx, "Please access as a guest.")
+				ctx.Abort()
+				return
+			}
+		}
+
+		ctx.Next()
+	}
+}
