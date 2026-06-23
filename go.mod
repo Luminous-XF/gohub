@@ -16,6 +16,7 @@ require (
 	github.com/spf13/cast v1.10.0
 	github.com/spf13/viper v1.21.0
 	github.com/thedevsaddam/govalidator v1.9.10
+	github.com/ulule/limiter/v3 v3.11.2
 	go.uber.org/zap v1.28.0
 	golang.org/x/crypto v0.50.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
@@ -54,6 +55,7 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/quic-go/qpack v0.6.0 // indirect
 	github.com/quic-go/quic-go v0.59.0 // indirect
 	github.com/sagikazarmark/locafero v0.11.0 // indirect
